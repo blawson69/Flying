@@ -4,7 +4,7 @@ A Roll20 script to indicate a flying token's number of feet above ground.
 
 On Github:	https://github.com/blawson69
 Contact me: https://app.roll20.net/users/1781274/ben-l
-Like this script? Buy me a coffee: https://venmo.com/theBenLawson
+Like this script? Buy me a coffee: https://venmo.com/theRealBenLawson
 */
 
 var Flying = Flying || (function() {
