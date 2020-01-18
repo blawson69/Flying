@@ -12,7 +12,7 @@ Like this script? Become a patron:
 var Flying = Flying || (function() {
     'use strict';
 
-    var version = '2.2',
+    var version = '2.2.1',
     debugMode = false,
     MARKERS,
     ALT_MARKERS = [{name:'red', tag: 'red', url:"#C91010"}, {name: 'blue', tag: 'blue', url: "#1076C9"}, {name: 'green', tag: 'green', url: "#2FC910"}, {name: 'brown', tag: 'brown', url: "#C97310"}, {name: 'purple', tag: 'purple', url: "#9510C9"}, {name: 'pink', tag: 'pink', url: "#EB75E1"}, {name: 'yellow', tag: 'yellow', url: "#E5EB75"}, {name: 'dead', tag: 'dead', url: "X"}],
@@ -72,7 +72,7 @@ var Flying = Flying || (function() {
                         token.set('status_' + state['Flying'].flyMarker, false);
                         if (height > 0) {
                             var oldMarkers = token.get("statusmarkers"), newMarkers = [];
-                            var newHeight = height.toString().split(''); //.reverse();
+                            var newHeight = height.toString().split('');
 
                             _.each(newHeight, function(num) {
                                 newMarkers.push(state['Flying'].flyMarker + '@' + num);
@@ -94,7 +94,11 @@ var Flying = Flying || (function() {
 
         var curr_marker = _.find(MARKERS, function (x) { return x.tag == state['Flying'].flyMarker; });
         if (typeof curr_marker == 'undefined') curr_marker = _.find(ALT_MARKERS, function (x) { return x.tag == state['Flying'].flyMarker; });
-        message += '<hr><h4>Flying Marker</h4>' + getMarker(curr_marker, marker_style) + 'This is the current Flying token marker. You may change it below.';
+
+        message += '<hr><h4>Flying Marker</h4>' + getMarker(curr_marker, marker_style);
+        if (typeof curr_marker == 'undefined') message += '<b style="color: #c00;">Warning:</b> The token marker "' + state['Flying'].flyMarker + '" is invalid!';
+        else message += 'This is the current Flying token marker. You may change it below.';
+
         message += '<div style="' + styles.buttonWrapper + '"><a style="' + styles.button + '" href="!fly-markers" title="This may result in a very long list...">Choose Marker</a></div>';
         message += '<div style="text-align: center;"><a style="' + styles.textButton + '" href="!fly-set &#63;&#123;Token Marker&#124;&#125;">Set manually</a></div>';
 
@@ -104,41 +108,32 @@ var Flying = Flying || (function() {
     showMarkers = function () {
         var message = '<table style="border: 0; width: 100%;" cellpadding="0" cellspacing="2">';
         _.each(ALT_MARKERS, function (marker) {
-            message += '<tr><td>' + getMarker(marker, 'margin-right: 10px;') + '</td><td style="white-space: nowrap; width: 100%;">' + marker.name + '</td>';
-            if (marker == state['Flying'].flyMarker) {
+            message += '<tr><td style="height: 24px;">' + getMarker(marker, 'margin-right: 10px;') + '</td><td style="white-space: nowrap; width: 100%;">' + marker.name + '</td>';
+            if (marker.tag == state['Flying'].flyMarker) {
                 message += '<td style="text-align: center;">Current</td>';
             } else {
-                message += '<td style="text-align: center; white-space: nowrap;"><a style="' + styles.button + '" href="!fly-set ' + marker.tag + '">Set Marker</a></td>';
+                message += '<td style="text-align: center; white-space: nowrap; padding: 2px;"><a style="' + styles.button + '" href="!fly-set ' + marker.tag + '">Set Marker</a></td>';
             }
             message += '</tr>';
         });
 
         _.each(MARKERS, function (icon) {
-            message += '<tr><td>' + getMarker(icon, 'margin-right: 10px;') + '</td><td style="white-space: nowrap; width: 100%;">' + icon.name + '</td>';
+            message += '<tr><td style="height: 24px;">' + getMarker(icon, 'margin-right: 10px;') + '</td><td style="white-space: nowrap; width: 100%;">' + icon.name + '</td>';
             if (icon.tag == state['Flying'].flyMarker) {
                 message += '<td style="text-align: center;">Current</td>';
             } else {
-                message += '<td style="text-align: center; white-space: nowrap;"><a style="' + styles.button + '" href="!fly-set ' + icon.tag.replace('::','=') + '">Set Marker</a></td>';
+                message += '<td style="text-align: center; white-space: nowrap; padding: 2px;"><a style="' + styles.button + '" href="!fly-set ' + icon.tag.replace('::','=') + '">Set Marker</a></td>';
             }
             message += '</tr>';
         });
 
-        message += '<tr><td colspan="3" style="text-align: center;"><a style="' + styles.button + '" href="!fly-config">&#9668; Back</a></td></tr>';
+        message += '<tr><td colspan="3" style="text-align: center; padding: 7px;"><a style="' + styles.button + '" href="!fly-config">&#9668; Back</a></td></tr>';
         message += '</table>';
 
         showDialog('Choose Flying Marker', message);
     },
 
     setMarker = function (marker) {
-        /*
-        var status_markers = ['blue', 'brown', 'green', 'pink', 'purple', 'red', 'yellow', 'all-for-one', 'angel-outfit', 'archery-target', 'arrowed', 'aura', 'back-pain', 'black-flag', 'bleeding-eye', 'bolt-shield', 'broken-heart', 'broken-shield', 'broken-skull', 'chained-heart', 'chemical-bolt', 'cobweb', 'dead', 'death-zone', 'drink-me', 'edge-crack', 'fishing-net', 'fist', 'fluffy-wing', 'flying-flag', 'frozen-orb', 'grab', 'grenade', 'half-haze', 'half-heart', 'interdiction', 'lightning-helix', 'ninja-mask', 'overdrive', 'padlock', 'pummeled', 'radioactive', 'rolling-bomb', 'screaming', 'sentry-gun', 'skull', 'sleepy', 'snail', 'spanner', 'stopwatch', 'strong', 'three-leaves', 'tread', 'trophy', 'white-tower'];
-        if (_.find(status_markers, function (tmp) {return tmp === marker; })) {
-            state['Flying'].flyMarker = marker;
-        } else {
-            showDialog('Error', 'The status marker "' + marker + '" is invalid. Please try again.');
-        }
-        */
-
         marker = marker.replace('=', '::');
         var status_markers = _.pluck(MARKERS, 'tag');
         _.each(_.pluck(ALT_MARKERS, 'tag'), function (x) { status_markers.push(x); });
@@ -153,7 +148,7 @@ var Flying = Flying || (function() {
 
     getMarker = function (marker, style = '') {
         var marker_style = 'width: 24px; height: 24px;' + style;
-        var return_marker = '<div style="' + marker_style + ' font-family: Webdings; color: #c00;">x</div>';
+        var return_marker = '<img src="" width="24" height="24" style="' + marker_style + ' border: 1px solid #ccc;" alt=" " />';
         if (typeof marker != 'undefined' && typeof marker.tag != 'undefined') {
             var status_markers = _.pluck(MARKERS, 'tag'),
             alt_marker = _.find(ALT_MARKERS, function (x) { return x.tag == marker.tag; });
