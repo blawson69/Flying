@@ -1,6 +1,6 @@
 # Flying
 
-> **New in v2.2:** TokenLocker has been updated to support the new [custom token markers](https://wiki.roll20.net/Custom_Token_Markers).
+> **New in v2.2:** Flying has been updated to support the new [custom token markers](https://wiki.roll20.net/Custom_Token_Markers).
 
 This  [Roll20](http://roll20.net/) script places one or more token markers on a selected token(s) to indicate a number of feet above ground that the token is "flying."
 
